@@ -22,10 +22,12 @@ export class ProjectService {
 
   }
 
-  async getProjects() {
-    return await this.projectRepository.findAll();
+  async getProjects(id: string, query: any) {
+    return await this.projectRepository.findAll(id, query);
   }
-
+  async fetchProjects() {
+    return await this.projectRepository.findAllProjects();
+  }
   async getProject(id: string) {
 
     const project =
@@ -66,7 +68,7 @@ console.log({project});
     throw new ApiError(404, "Project not found");
   }
 
-  if (role !== UserRole.ADMIN) {
+  if (role === UserRole.MANAGER) {
 
     if (
       project.createdBy._id.toString() !== currentUserId

@@ -8,8 +8,9 @@ import {
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { useAppSelector } from "../../hooks/useAppSelector";
 
-import { getUsers } from "../../features/users/userThunk";
+import { fetchUsers } from "../../features/users/userThunk";
 import { getProject, updateProject } from "../../features/project/projectThunk";
+import { toast } from "react-toastify";
 
 const EditProject = () => {
   const { id } = useParams();
@@ -21,14 +22,16 @@ const EditProject = () => {
   const { project } = useAppSelector(
     (state) => state.projects
   );
-
-  const { users } = useAppSelector(
-    (state) => state.users
-  );
-
+  const { user } = useAppSelector(
+    (state) => state.auth
+  )
+  
+  console.log(user);
+  
   const [form, setForm] = useState({
     title: "",
     description: "",
+    status: "",
     manager: "",
   });
 
@@ -37,14 +40,24 @@ const EditProject = () => {
       dispatch(getProject(id));
     }
 
-    dispatch(getUsers());
+    dispatch(fetchUsers());
   }, [dispatch, id]);
+
+  useEffect(() => {
+  if (user?.role === "manager") {
+    setForm(prev => ({
+      ...prev,
+      manager: user.id, 
+    }));
+  }
+}, [user]);
 
   useEffect(() => {
     if (project) {
       setForm({
         title: project.title,
         description: project.description,
+        status: project.status,
         manager: project.manager._id,
       });
     }
@@ -65,15 +78,18 @@ const EditProject = () => {
     e: React.FormEvent
   ) => {
     e.preventDefault();
-
+    try {
     await dispatch(
       updateProject({
         id: id!,
         data: form,
       })
-    );
-
+    ).unwrap();
+    toast.success("Project updated successfully");
     navigate("/projects");
+  } catch(err: any){
+    toast.error(err)
+  }
   };
 
 return (
@@ -119,6 +135,30 @@ return (
             />
 
           </div>
+<div className="mb-3">
+  <label className="form-label">
+    Status
+  </label>
+
+  <select
+    className="form-select"
+    name="status"
+    value={form.status}
+    onChange={handleChange}
+  >
+    <option value="active">
+      Active
+    </option>
+
+    <option value="completed">
+      Completed
+    </option>
+
+    <option value="on_hold">
+      On Hold
+    </option>
+  </select>
+</div>
 
           <div className="mb-3">
 
@@ -126,27 +166,11 @@ return (
               Manager
             </label>
 
-            <select
-              className="form-select"
-              name="manager"
-              value={form.manager}
-              onChange={handleChange}
-            >
-
-              {users
-                .filter(user => user.role === "manager")
-                .map(user => (
-
-                  <option
-                    key={user._id}
-                    value={user._id}
-                  >
-                    {user.name}
-                  </option>
-
-                ))}
-
-            </select>
+<input
+  className="form-control"
+  value={user?.name || ""}
+  readOnly
+/>
 
           </div>
 

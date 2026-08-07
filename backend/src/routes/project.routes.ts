@@ -32,7 +32,10 @@ router.get(
   "/",
   projectController.getProjects
 );
-
+router.get(
+  "/all-projects",
+  projectController.fetchProjects
+)
 router.get(
   "/:id",
   projectController.getProject

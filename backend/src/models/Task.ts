@@ -13,7 +13,29 @@ export interface ITask extends Document {
   assignedTo: Types.ObjectId;
   createdBy: Types.ObjectId;
 }
-
+export interface TaskListResponse {
+  tasks: ITask[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+export interface AssignedTaskResponse {
+  _id: Types.ObjectId;
+  title: string;
+  description: string;
+  status: TaskStatus;
+  priority: TaskPriority;
+  dueDate: Date;
+  assignedTo: Types.ObjectId;
+  project: {
+    _id: Types.ObjectId;
+    title: string;
+  };
+  createdBy: {
+    _id: Types.ObjectId;
+    name: string;
+  };
+}
 const taskSchema = new Schema<ITask>(
   {
     title: {

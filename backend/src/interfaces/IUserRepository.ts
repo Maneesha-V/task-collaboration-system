@@ -1,4 +1,5 @@
-import { IUser } from "../models/User";
+import { IUser, UserListResponse } from "../models/User";
+import { PaginatedQuery } from "../types/authTypes";
 
 export interface IUserRepository {
   create(user: Partial<IUser>): Promise<IUser>;
@@ -10,10 +11,12 @@ export interface IUserRepository {
     userId:string,
     refreshToken:string | null
   ):Promise<void>;
-  findAll():Promise<IUser[]>;
+  findAll(id: string, query: PaginatedQuery):Promise<UserListResponse>;
+  findAllUsers(): Promise<IUser[]>
   deleteById(id:string):Promise<void>;
   update(
       id: string,
       data: Partial<IUser>
   ): Promise<IUser | null>;
+  countAllUsers(): Promise<number>;
 }

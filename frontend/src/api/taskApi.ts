@@ -1,8 +1,19 @@
 import type { CreateTaskInput, UpdateTaskInput } from "../features/task/taskTypes";
 import api from "./axios";
 
-export const getTasksApi = async () => {
-  const response = await api.get("/tasks");
+export const getTasksApi = async (
+  page: number,
+  search: string,
+  status: string
+) => {
+  const response = await api.get("/tasks", {
+    params: {
+      page,
+      search,
+      status,
+    },
+  });
+
   return response.data;
 };
 

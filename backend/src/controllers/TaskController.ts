@@ -38,8 +38,9 @@ export class TaskController {
     next: NextFunction
   ) => {
     try {
-      const tasks = await this.taskService.getTasks(req.query);
-
+      const tasks = await this.taskService.getTasks(req.user!.userId,req.query);
+      console.log(tasks);
+      
       res.json({
         success: true,
         data: tasks,
@@ -106,3 +107,4 @@ export class TaskController {
     }
   };
 }
+

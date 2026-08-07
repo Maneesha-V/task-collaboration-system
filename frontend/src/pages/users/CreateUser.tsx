@@ -2,165 +2,113 @@ import { useState } from "react";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { createUser } from "../../features/users/userThunk";
 import { useNavigate } from "react-router-dom";
-
+import { toast } from "react-toastify";
 
 const CreateUser = () => {
-
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-
-  const [form,setForm] = useState({
-
-    name:"",
-    email:"",
-    password:"",
-    role:"user"
-
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    role: "user",
   });
 
-
   const handleChange = (
-    e:React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  )=>{
-
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     setForm({
       ...form,
-      [e.target.name]:e.target.value
+      [e.target.name]: e.target.value,
     });
-
   };
 
-
-  const handleSubmit = async(
-    e:React.FormEvent
-  )=>{
-
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    try {
+      await dispatch(createUser(form)).unwrap();
 
-    await dispatch(
-      createUser(form)
-    );
-
-
-    navigate("/users");
-
+      toast.success("User created successfully");
+      navigate("/users");
+    } catch (err: any) {
+      console.log(err);
+      
+      toast.error(err);
+    }
   };
 
+  return (
+    <div className="container">
+      <div className="card shadow mx-auto" style={{ maxWidth: "600px" }}>
+        <div className="card-body">
+          <h3 className="mb-4">Create User</h3>
 
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label className="form-label">Name</label>
 
-return (
-  <div className="container">
+              <input
+                className="form-control"
+                name="name"
+                placeholder="Enter name"
+                value={form.name}
+                onChange={handleChange}
+              />
+            </div>
 
-    <div
-      className="card shadow mx-auto"
-      style={{ maxWidth: "600px" }}
-    >
+            <div className="mb-3">
+              <label className="form-label">Email</label>
 
-      <div className="card-body">
+              <input
+                type="email"
+                className="form-control"
+                name="email"
+                placeholder="Enter email"
+                value={form.email}
+                onChange={handleChange}
+              />
+            </div>
 
-        <h3 className="mb-4">
-          Create User
-        </h3>
+            <div className="mb-3">
+              <label className="form-label">Password</label>
 
-        <form onSubmit={handleSubmit}>
+              <input
+                type="password"
+                className="form-control"
+                name="password"
+                placeholder="Enter password"
+                value={form.password}
+                onChange={handleChange}
+              />
+            </div>
 
-          <div className="mb-3">
+            <div className="mb-4">
+              <label className="form-label">Role</label>
 
-            <label className="form-label">
-              Name
-            </label>
+              <select
+                className="form-select"
+                name="role"
+                value={form.role}
+                onChange={handleChange}
+              >
+                <option value="user">User</option>
 
-            <input
-              className="form-control"
-              name="name"
-              placeholder="Enter name"
-              value={form.name}
-              onChange={handleChange}
-            />
+                <option value="manager">Manager</option>
+              </select>
+            </div>
 
-          </div>
-
-          <div className="mb-3">
-
-            <label className="form-label">
-              Email
-            </label>
-
-            <input
-              type="email"
-              className="form-control"
-              name="email"
-              placeholder="Enter email"
-              value={form.email}
-              onChange={handleChange}
-            />
-
-          </div>
-
-          <div className="mb-3">
-
-            <label className="form-label">
-              Password
-            </label>
-
-            <input
-              type="password"
-              className="form-control"
-              name="password"
-              placeholder="Enter password"
-              value={form.password}
-              onChange={handleChange}
-            />
-
-          </div>
-
-          <div className="mb-4">
-
-            <label className="form-label">
-              Role
-            </label>
-
-            <select
-              className="form-select"
-              name="role"
-              value={form.role}
-              onChange={handleChange}
-            >
-              <option value="user">
-                User
-              </option>
-
-              <option value="manager">
-                Manager
-              </option>
-
-            </select>
-
-          </div>
-
-          <div className="text-end">
-
-            <button
-              type="submit"
-              className="btn btn-primary"
-            >
-              Create User
-            </button>
-
-          </div>
-
-        </form>
-
+            <div className="text-end">
+              <button type="submit" className="btn btn-primary">
+                Create User
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-
     </div>
-
-  </div>
-);
-
+  );
 };
-
 
 export default CreateUser;

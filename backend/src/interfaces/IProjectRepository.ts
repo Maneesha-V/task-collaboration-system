@@ -1,4 +1,6 @@
-import { IProject } from "../models/Project";
+import { IProject, ProjectListResponse } from "../models/Project";
+import { TotCompProjectsResp } from "../repositories/ProjectRepository";
+import { AuthUser } from "../types/authTypes";
 
 export interface IProjectRepository {
 
@@ -6,8 +8,8 @@ export interface IProjectRepository {
     data: Partial<IProject>
   ): Promise<IProject>;
 
-  findAll(): Promise<IProject[]>;
-
+  findAll(id: string, query: any): Promise<ProjectListResponse>;
+  findAllProjects(): Promise<IProject[]>
   findById(
     id: string
   ): Promise<IProject | null>;
@@ -20,5 +22,5 @@ export interface IProjectRepository {
   delete(
     id: string
   ): Promise<void>;
-
+  countAllProjects(user: AuthUser): Promise<TotCompProjectsResp>;
 }

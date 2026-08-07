@@ -1,10 +1,18 @@
-import type { CreateUserRequest } from "../features/users/userTypes";
+import type { CreateUserRequest, UpdateUserRequest } from "../features/users/userTypes";
 import api from "./axios";
 
-export const getUsersApi = async () => {
+export const getUsersApi = async (
+    params: {
+    search?: string;
+    role?: string;
+    page?: number;
+  }
+) => {
 
   const response = await api.get(
-    "/users"
+    "/users",{
+      params
+    }
   );
   console.log("response",response);
   
@@ -12,6 +20,10 @@ export const getUsersApi = async () => {
 
 };
 
+export const fetchUsersApi = async () => {
+  const response = await api.get("/users/all-users")
+  return response.data;
+}
 export const getUserApi = async (id: string) => {
 
   const response = await api.get(
@@ -31,7 +43,8 @@ export const createUserApi = async (
     "/users",
     data
   );
-
+  console.log("response",response);
+  
   return response.data;
 
 };
@@ -51,7 +64,7 @@ export const deleteUserApi = async (
 
 export const updateUserApi = async (
   id:string,
-  data:any
+  data:UpdateUserRequest
 )=>{
 
   const response = await api.patch(
@@ -62,3 +75,7 @@ export const updateUserApi = async (
   return response.data;
 
 };
+export const fetchDashbaordApi = async () => {
+  const response = await api.get("/users/dashboard");
+  return response.data;
+}

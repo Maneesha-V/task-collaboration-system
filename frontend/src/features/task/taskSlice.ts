@@ -40,7 +40,7 @@ const taskSlice = createSlice({
 
           state.loading = false;
 
-          state.tasks = action.payload.data;
+          state.tasks = action.payload.data.tasks;
 
         }
       )

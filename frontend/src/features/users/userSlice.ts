@@ -7,7 +7,9 @@ import {
  createUser,
  deleteUser,
  updateUser,
- getUser
+ getUser,
+ fetchUsers,
+ fetchDashbaord
 } from "./userThunk";
 import type { User } from "./userTypes";
 
@@ -17,6 +19,7 @@ interface UserState {
  loading: boolean;
  error: string | null;
  user: User | null;
+ dashboard: any;
 }
 
 const initialState: UserState = {
@@ -25,6 +28,7 @@ const initialState: UserState = {
  loading:false,
  error:null,
  user: null,
+ dashboard: null,
 };
 
 
@@ -57,11 +61,30 @@ const userSlice=createSlice({
     state.loading=false;
 
     state.users =
+      action.payload.data.users;
+
+  }
+ )
+.addCase(
+  fetchUsers.pending,
+  (state)=>{
+    state.loading=true;
+  }
+ )
+
+
+ .addCase(
+  fetchUsers.fulfilled,
+  (state,action)=>{
+    console.log("slice",action.payload);
+    
+    state.loading=false;
+
+    state.users =
       action.payload.data;
 
   }
  )
-
 
  .addCase(
   createUser.fulfilled,
@@ -133,6 +156,27 @@ const userSlice=createSlice({
 
   }
  )
+.addCase(
+  fetchDashbaord.pending,
+  (state)=>{
+    state.loading=true;
+  }
+ )
+
+
+ .addCase(
+  fetchDashbaord.fulfilled,
+  (state,action)=>{
+
+    state.loading=false;
+    console.log(action.payload);
+    
+    state.dashboard =
+      action.payload.data;
+
+  }
+ )
+ 
  }
 
 });

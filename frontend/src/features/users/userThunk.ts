@@ -1,69 +1,122 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { createUserApi, deleteUserApi, getUserApi, getUsersApi, updateUserApi } from "../../api/userApi";
-import type { CreateUserRequest } from "./userTypes";
 
-export const getUsers =
-createAsyncThunk(
+import {
+  createUserApi,
+  deleteUserApi,
+  fetchDashbaordApi,
+  fetchUsersApi,
+  getUserApi,
+  getUsersApi,
+  updateUserApi,
+} from "../../api/userApi";
+
+import type { CreateUserRequest, UpdateUserRequest } from "./userTypes";
+
+export const getUsers = createAsyncThunk(
   "users/getUsers",
-  async () => {
-
-    return await getUsersApi();
-
+  async (
+      params : {
+      page: number;
+      search: string;
+      role: string;
+    }, { rejectWithValue }) => {
+    try {
+      return await getUsersApi(params);
+    } catch (err: any) {
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to fetch users"
+      );
+    }
   }
 );
 
-export const getUser =
-createAsyncThunk(
+export const fetchUsers = createAsyncThunk(
+  "users/fetchUsers",
+  async (_, { rejectWithValue }) => {
+    try {
+      return await fetchUsersApi();
+    } catch (err: any) {
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to fetch user"
+      );
+    }
+  }
+);
+
+export const getUser = createAsyncThunk(
   "users/getUser",
-  async (id: string) => {
-console.log(id);
-
-    return await getUserApi(id);
-
+  async (id: string, { rejectWithValue }) => {
+    try {
+      return await getUserApi(id);
+    } catch (err: any) {
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to fetch user"
+      );
+    }
   }
 );
 
-export const createUser =
-createAsyncThunk(
+export const createUser = createAsyncThunk(
   "users/createUser",
-  async(data:CreateUserRequest)=>{
-
-    return await createUserApi(data);
-
+  async (
+    data: CreateUserRequest,
+    { rejectWithValue }
+  ) => {
+    try {
+      return await createUserApi(data);
+    } catch (err: any) {
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to create user"
+      );
+    }
   }
 );
 
-
-
-export const deleteUser =
-createAsyncThunk(
- "users/deleteUser",
- async(id:string)=>{
-
-   await deleteUserApi(id);
-
-   return id;
-
- }
+export const deleteUser = createAsyncThunk(
+  "users/deleteUser",
+  async (id: string, { rejectWithValue }) => {
+    try {
+      await deleteUserApi(id);
+      return id;
+    } catch (err: any) {
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to delete user"
+      );
+    }
+  }
 );
 
-export const updateUser =
-createAsyncThunk(
- "users/updateUser",
- async(
-   {
-    id,
-    data
-   }:{
-    id:string;
-    data:any;
-   }
- )=>{
+export const updateUser = createAsyncThunk(
+  "users/updateUser",
+  async (
+    {
+      id,
+      data,
+    }: {
+      id: string;
+      data: UpdateUserRequest;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      return await updateUserApi(id, data);
+    } catch (err: any) {
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to update user"
+      );
+    }
+  }
+);
 
-   return await updateUserApi(
-    id,
-    data
-   );
-
- }
+export const fetchDashbaord = createAsyncThunk(
+  "users/fetchDashbaord",
+  async (_, { rejectWithValue }) => {
+    try {
+      return await fetchDashbaordApi();
+    } catch (err: any) {
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to fetch dashbaord"
+      );
+    }
+  }
 );

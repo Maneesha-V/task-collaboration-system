@@ -24,4 +24,5 @@ export interface AuthState {
   accessToken: string | null;
   loading: boolean;
   error: string | null;
+  authChecked: boolean;
 }

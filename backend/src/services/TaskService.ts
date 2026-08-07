@@ -4,6 +4,7 @@ import TYPES from "../types/types";
 
 import { ITaskRepository } from "../interfaces/ITaskRepository";
 import { ApiError } from "../utils/ApiError";
+import { PaginatedQuery } from "../types/authTypes";
 
 @injectable()
 export class TaskService {
@@ -19,8 +20,9 @@ export class TaskService {
     });
   }
 
-  async getTasks(query: any) {
-    return await this.taskRepository.findAll(query);
+  async getTasks(id: string,query: PaginatedQuery) {
+    console.log(query);
+    return await this.taskRepository.findAll(id, query);
   }
 
   async getTask(id: string) {

@@ -10,6 +10,13 @@ export interface IUser extends Document {
   refreshToken?: string | null;
 }
 
+export interface UserListResponse {
+  users: IUser[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
 const userSchema = new Schema<IUser>(
   {
     name: {

@@ -23,7 +23,6 @@ container.get<UserController>(
 
 router.use(
   authenticate,
-  // authorize(UserRole.ADMIN)
 );
 
 router.get(
@@ -33,6 +32,15 @@ router.get(
     UserRole.MANAGER
   ),
   userController.getUsers
+);
+
+router.get(
+  "/all-users",
+  authorize(
+    UserRole.ADMIN,
+    UserRole.MANAGER
+  ),
+  userController.fetchUsers
 );
 
 router.post(
@@ -61,4 +69,13 @@ router.patch(
   userController.updateUser
 );
 
+router.get(
+  "/dashboard",
+  authorize(
+    UserRole.ADMIN,
+    UserRole.MANAGER,
+    UserRole.USER,
+  ),
+  userController.fetchDashboard
+)
 export default router;

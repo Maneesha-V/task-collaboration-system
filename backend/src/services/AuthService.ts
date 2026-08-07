@@ -6,7 +6,7 @@ import { IUserRepository } from "../interfaces/IUserRepository";
 import { ApiError } from "../utils/ApiError";
 import { LoginInput, RegisterInput } from "../validators/auth.validator";
 import { toUserResponseDto } from "../dto/auth/user.dto";
-import { LoginResponseDto } from "../dto/auth/login-response.dto";
+import { LoginData, LoginResponseDto } from "../dto/auth/login-response.dto";
 import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
 
 @injectable()
@@ -16,31 +16,43 @@ export class AuthService {
     private readonly userRepository: IUserRepository
   ) {}
   async register(data: RegisterInput) {
-    const existingUser = await this.userRepository.findByEmail(data.email);
+      console.log({data});
+     const {
+    name,
+    email,
+    password,
+    role
+  } = data.body;
+
+    const existingUser = await this.userRepository.findByEmail(email);
 
     if (existingUser) {
       throw new ApiError(409, "Email already exists");
     }
 
-    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await this.userRepository.create({
-      ...data,
+      name,
+      email,
+      role,
       password: hashedPassword,
     });
 
     return toUserResponseDto(user);
   }
-  async login(data: LoginInput): Promise<LoginResponseDto> {
+  async login(data: LoginData): Promise<LoginResponseDto> {
 
-  const user = await this.userRepository.findByEmail(data.email);
+  const { email, password } = data;
+
+  const user = await this.userRepository.findByEmail(email);
 
   if (!user) {
     throw new ApiError(401, "Invalid email or password");
   }
 
   const isPasswordValid = await bcrypt.compare(
-    data.password,
+    password,
     user.password
   );
 
@@ -115,7 +127,13 @@ console.log("Decoded token:", decoded);
 
 
   return {
-    accessToken
+    accessToken,
+    user: {
+      id: user._id.toString(),
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    },
   };
 }
 async logout(token: string) {

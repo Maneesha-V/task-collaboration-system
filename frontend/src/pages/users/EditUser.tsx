@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { getUser, updateUser } from "../../features/users/userThunk";
 import { useAppSelector } from "../../hooks/useAppSelector";
+import { toast } from "react-toastify";
 
 const EditUser = () => {
 
@@ -54,16 +55,20 @@ useEffect(() => {
   ) => {
 
     e.preventDefault();
-
+    try {
     await dispatch(
       updateUser({
         id: id!,
         data: form,
       })
-    );
-
+    ).unwrap();
+    toast.success("User updated successfully");
     navigate("/users");
-
+  } catch(err: any){
+    console.log(err);
+    
+    toast.error(err)
+  }
   };
 
 return (

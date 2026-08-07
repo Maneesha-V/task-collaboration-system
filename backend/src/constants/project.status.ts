@@ -1,5 +1,5 @@
 export enum ProjectStatus {
   ACTIVE = "active",
   COMPLETED = "completed",
-  ARCHIVED = "archived",
+  ON_HOLD = "on_hold",
 }

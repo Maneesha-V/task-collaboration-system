@@ -38,6 +38,8 @@ login = async (
   next: NextFunction
 ) => {
   try {
+    console.log(req.body);
+    
     const result = await this.authService.login(req.body);
 
     res
@@ -67,7 +69,9 @@ refreshToken = async (
 ) => {
   try {
     const refreshToken = req.cookies.refreshToken;
-
+    const user = req.user;
+    console.log("user",user);
+    
     const result = await this.authService.refreshToken(
       refreshToken
     );
@@ -75,7 +79,10 @@ refreshToken = async (
     res.status(200).json({
       success: true,
       message: "Token refreshed successfully",
-      data: result,
+      data: {
+          accessToken: result.accessToken,
+          user: result.user,
+        },
     });
 
   } catch(error) {

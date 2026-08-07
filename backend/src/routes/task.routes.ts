@@ -31,7 +31,10 @@ router.post(
   taskController.createTask
 );
 
-router.get("/", taskController.getTasks);
+router.get("/", 
+  authorize(UserRole.MANAGER),
+  taskController.getTasks
+);
 
 router.get("/:id", taskController.getTask);
 

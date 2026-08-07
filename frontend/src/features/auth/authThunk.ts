@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { loginApi } from "../../api/authApi";
+import { loginApi, refreshTokenApi } from "../../api/authApi";
 import type { LoginRequest } from "./authTypes";
 
 export const login = createAsyncThunk(
@@ -14,3 +14,15 @@ export const login = createAsyncThunk(
     }
   }
 );
+export const refreshToken = createAsyncThunk(
+  "auth/refreshToken",
+  async(_, thunkAPI) => {
+    try {
+      return await refreshTokenApi();
+    } catch(err: any){
+        return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to refresh token"
+      );
+    }
+  }
+)

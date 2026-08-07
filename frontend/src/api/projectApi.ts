@@ -1,13 +1,24 @@
 import type { CreateProjectRequest, UpdateProjectRequest } from "../features/project/projectTypes";
 import api from "./axios";
 
-export const getProjectsApi = async () => {
-  const response = await api.get("/projects/");
+export const getProjectsApi = async (
+  params: {
+    search?: string;
+    status?: string;
+    page?: number;
+  }
+) => {
+  const response = await api.get("/projects/",{
+    params
+  });
   console.log(response);
   
   return response.data;
 };
-
+export const fetchProjectsApi = async () => {
+  const response = await api.get(`/projects/all-projects`);
+  return response.data;
+}
 export const getProjectApi = async (id: string) => {
   const response = await api.get(`/projects/${id}`);
   console.log(response);

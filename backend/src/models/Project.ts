@@ -9,6 +9,12 @@ export interface IProject extends Document {
   members: Types.ObjectId[];
   createdBy: Types.ObjectId;
 }
+export interface ProjectListResponse {
+  projects: IProject[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
 
 const projectSchema = new Schema<IProject>(
   {

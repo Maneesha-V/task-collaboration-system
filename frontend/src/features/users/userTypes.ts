@@ -12,3 +12,9 @@ export interface CreateUserRequest {
   password: string;
   role: string;
 }
+
+export interface UpdateUserRequest {
+  name?: string;
+  email?: string;
+  role?: string;
+}

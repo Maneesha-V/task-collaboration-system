@@ -2,6 +2,7 @@ export interface Project {
   _id: string;
   title: string;
   description: string;
+  status: string;
   manager: {
     _id: string;
     name: string;

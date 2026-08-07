@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { useAppDispatch } from "../../hooks/useAppDispatch";
@@ -8,6 +8,11 @@ import {
   deleteTask,
   getTasks,
 } from "../../features/task/taskThunk";
+import useDebounce from "../../hooks/useDebounce";
+import SearchInput from "../../components/common/SearchInput";
+import FilterSelect from "../../components/common/FilterSelect";
+import Pagination from "../../components/common/Pagination";
+import { toast } from "react-toastify";
 
 const Tasks = () => {
 
@@ -20,10 +25,34 @@ const Tasks = () => {
     state => state.tasks
   );
 
-  useEffect(() => {
-    dispatch(getTasks());
-  }, [dispatch]);
-
+  console.log("tasks",tasks);
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("");
+  const [page, setPage] = useState(1);
+  const debouncedSearch = useDebounce(search);
+  
+useEffect(() => {
+  dispatch(
+    getTasks({
+      page,
+      search: debouncedSearch,
+      status,
+    })
+  );
+}, [
+  dispatch,
+  page,
+  debouncedSearch,
+  status,
+]);
+  const handleDelete = async (id: string) => {
+    try{
+      await dispatch(deleteTask(id)).unwrap();
+      toast.success("Task deleted successfully");
+    } catch(err: any){
+      toast.error((err));   
+    }
+  }
   if (loading) {
     return (
       <div className="text-center mt-5">
@@ -47,6 +76,33 @@ const Tasks = () => {
         </Link>
 
       </div>
+
+<div className="d-flex gap-3 mb-3">
+
+  <SearchInput
+    value={search}
+    onChange={setSearch}
+    placeholder="Search Tasks..."
+  />
+
+  <FilterSelect
+    value={status}
+    onChange={setStatus}
+    options={[
+      { label: "All Status", value: "" },
+      { label: "Todo", value: "todo" },
+      {
+        label: "In Progress",
+        value: "in_progress",
+      },
+      {
+        label: "Completed",
+        value: "completed",
+      },
+    ]}
+  />
+
+</div>
 
       <div className="card shadow">
 
@@ -112,9 +168,7 @@ const Tasks = () => {
 
                     <button
                       className="btn btn-sm btn-danger"
-                      onClick={() =>
-                        dispatch(deleteTask(task._id))
-                      }
+                      onClick={() => handleDelete(task._id)}
                     >
                       Delete
                     </button>
@@ -132,6 +186,11 @@ const Tasks = () => {
         </div>
 
       </div>
+<Pagination
+  page={page}
+  totalPages={5}
+  onPageChange={setPage}
+/>
 
     </div>
 

@@ -22,7 +22,7 @@ export class UserController {
 
     try {
 
-      const users = await this.userService.getUsers();
+      const users = await this.userService.getUsers(req.user!.userId,req.query);
 
       res.status(200).json({
         success:true,
@@ -35,7 +35,26 @@ export class UserController {
 
   };
 
+  fetchUsers = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
 
+    try {
+
+      const users = await this.userService.fetchUsers();
+
+      res.status(200).json({
+        success:true,
+        data:users
+      });
+
+    } catch(error) {
+      next(error);
+    }
+
+  };
   createUser = async (
     req: Request,
     res: Response,
@@ -131,4 +150,25 @@ export class UserController {
     }
 
   };
+  fetchDashboard = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      console.log(req.user);
+      
+      const dashboardData = await this.userService.fetchDashboard(req.user!);
+
+
+      res.status(200).json({
+        success:true,
+        data: dashboardData
+      });
+
+
+    } catch(error){
+      next(error);
+    }
+  }
 }

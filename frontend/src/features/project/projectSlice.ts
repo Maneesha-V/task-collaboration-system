@@ -6,6 +6,7 @@ import {
   createProject,
   updateProject,
   deleteProject,
+  fetchProjects,
 } from "./projectThunk";
 
 import type { Project } from "./projectTypes";
@@ -40,9 +41,17 @@ const projectSlice = createSlice({
 
       .addCase(getProjects.fulfilled, (state, action) => {
         state.loading = false;
-        state.projects = action.payload.data;
+        state.projects = action.payload.data.projects;
       })
 
+      .addCase(fetchProjects.pending, (state) => {
+        state.loading = true;
+      })
+
+      .addCase(fetchProjects.fulfilled, (state, action) => {
+        state.loading = false;
+        state.projects = action.payload.data;
+      })
       .addCase(getProject.fulfilled, (state, action) => {
         state.project = action.payload.data;
       })

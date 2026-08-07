@@ -43,7 +43,7 @@ export class ProjectController {
   ) => {
     try {
       const projects =
-        await this.projectService.getProjects();
+        await this.projectService.getProjects(req.user!.userId, req.query);
 
       res.status(200).json({
         success: true,
@@ -55,7 +55,25 @@ export class ProjectController {
       next(error);
     }
   };
+  fetchProjects = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
 
+    try {
+
+      const users = await this.projectService.fetchProjects();
+
+      res.status(200).json({
+        success:true,
+        data:users
+      });
+
+    } catch(error) {
+      next(error);
+    }
+  }
   getProject = async (
     req: Request,
     res: Response,

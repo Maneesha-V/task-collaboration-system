@@ -1,9 +1,10 @@
-import { ITask } from "../models/Task";
+import { AssignedTaskResponse, ITask, TaskListResponse } from "../models/Task";
+import { AuthUser, PaginatedQuery } from "../types/authTypes";
 
 export interface ITaskRepository {
   create(data: Partial<ITask>): Promise<ITask>;
 
-  findAll(query: any): Promise<ITask[]>;
+  findAll(id: string, query: PaginatedQuery): Promise<TaskListResponse>;
 
   findById(id: string): Promise<ITask | null>;
 
@@ -13,4 +14,6 @@ export interface ITaskRepository {
   ): Promise<ITask | null>;
 
   delete(id: string): Promise<void>;
+  countAllTasks(user: AuthUser): Promise<number>;
+  getUserTasks(user: AuthUser): Promise<ITask[]>
 }

@@ -4,26 +4,36 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { useAppSelector } from "../../hooks/useAppSelector";
 
-import { getUsers } from "../../features/users/userThunk";
+import { fetchUsers } from "../../features/users/userThunk";
 import { createProject } from "../../features/project/projectThunk";
+import { toast } from "react-toastify";
 
 const CreateProject = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const { users } = useAppSelector(
-    (state) => state.users
-  );
-
+  const { user } = useAppSelector(
+    (state) => state.auth
+  )
   const [form, setForm] = useState({
     title: "",
     description: "",
+    status: "",
     manager: "",
   });
 
   useEffect(() => {
-    dispatch(getUsers());
+    dispatch(fetchUsers());
   }, [dispatch]);
+
+    useEffect(() => {
+  if (user?.role === "manager") {
+    setForm(prev => ({
+      ...prev,
+      manager: user.id, 
+    }));
+  }
+}, [user]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -43,9 +53,15 @@ const CreateProject = () => {
   ) => {
     e.preventDefault();
 
-    await dispatch(createProject(form));
+try {
+  await dispatch(createProject(form)).unwrap();
 
-    navigate("/projects");
+  toast.success("Project created successfully");
+
+  navigate("/projects");
+} catch (err: any) {
+  toast.error(err);
+}
   };
 
   return (
@@ -96,37 +112,41 @@ const CreateProject = () => {
               />
 
             </div>
+<div className="mb-3">
+  <label className="form-label">
+    Status
+  </label>
 
+  <select
+    className="form-select"
+    name="status"
+    value={form.status}
+    onChange={handleChange}
+  >
+    <option value="active">
+      Active
+    </option>
+
+    <option value="completed">
+      Completed
+    </option>
+
+    <option value="on_hold">
+      On Hold
+    </option>
+  </select>
+</div>
             <div className="mb-4">
 
               <label className="form-label">
                 Manager
               </label>
+<input
+  className="form-control"
+  value={user?.name || ""}
+  readOnly
+/>
 
-              <select
-                className="form-select"
-                name="manager"
-                value={form.manager}
-                onChange={handleChange}
-              >
-                <option value="">
-                  Select Manager
-                </option>
-
-                {users
-                  .filter(
-                    (user) =>
-                      user.role === "manager"
-                  )
-                  .map((user) => (
-                    <option
-                      key={user._id}
-                      value={user._id}
-                    >
-                      {user.name}
-                    </option>
-                  ))}
-              </select>
 
             </div>
 

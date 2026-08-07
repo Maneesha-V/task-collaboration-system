@@ -9,9 +9,10 @@ import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { useAppSelector } from "../../hooks/useAppSelector";
 
 
-import { getProjects } from "../../features/project/projectThunk";
-import { getUsers } from "../../features/users/userThunk";
+import { fetchProjects, getProjects } from "../../features/project/projectThunk";
+import { fetchUsers } from "../../features/users/userThunk";
 import { getTask, updateTask } from "../../features/task/taskThunk";
+import { toast } from "react-toastify";
 
 const EditTask = () => {
 
@@ -23,10 +24,6 @@ const EditTask = () => {
 
   const { task } = useAppSelector(
     state => state.tasks
-  );
-
-  const { projects } = useAppSelector(
-    state => state.projects
   );
 
   const { users } = useAppSelector(
@@ -44,9 +41,9 @@ const EditTask = () => {
 
     dispatch(getTask(id!));
 
-    dispatch(getProjects());
+    dispatch(fetchProjects());
 
-    dispatch(getUsers());
+    dispatch(fetchUsers());
 
   }, [dispatch, id]);
 
@@ -93,7 +90,7 @@ const EditTask = () => {
   ) => {
 
     e.preventDefault();
-
+    try {
     await dispatch(
 
       updateTask({
@@ -104,10 +101,13 @@ const EditTask = () => {
 
       })
 
-    );
-
+    ).unwrap();
+    toast.success("Task updated successfully");
     navigate("/tasks");
-
+  } catch(err: any){
+    toast.error((err));
+    
+  }
   };
 
  return (
@@ -192,7 +192,7 @@ const EditTask = () => {
             >
 
               {users
-                .filter(user => user.role === "user")
+                .filter(user => user?.role === "user")
                 .map(user => (
 
                   <option
