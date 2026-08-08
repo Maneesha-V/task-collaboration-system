@@ -6,6 +6,7 @@ import { useAppSelector } from "../../hooks/useAppSelector";
 
 import { login } from "../../features/auth/authThunk";
 import type { LoginRequest } from "../../features/auth/authTypes";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const dispatch = useAppDispatch();
@@ -21,10 +22,12 @@ const Login = () => {
   } = useForm<LoginRequest>();
 
   const onSubmit = async (data: LoginRequest) => {
-    const result = await dispatch(login(data));
-
-    if (login.fulfilled.match(result)) {
+    try {
+      await dispatch(login(data)).unwrap();
+      toast.success("Login successfully.")
       navigate("/dashboard");
+    } catch(err: any){
+      toast.error(err)
     }
   };
 

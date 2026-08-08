@@ -9,7 +9,7 @@ import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { useAppSelector } from "../../hooks/useAppSelector";
 
 
-import { fetchProjects, getProjects } from "../../features/project/projectThunk";
+import { fetchProjects } from "../../features/project/projectThunk";
 import { fetchUsers } from "../../features/users/userThunk";
 import { getTask, updateTask } from "../../features/task/taskThunk";
 import { toast } from "react-toastify";

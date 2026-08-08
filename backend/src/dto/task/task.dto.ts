@@ -5,6 +5,7 @@ export interface AssignedTaskResponseDto {
   title: string;
   description: string;
   status: string;
+  priority: string;
   dueDate: Date;
   project: {
     _id: string;
@@ -23,6 +24,7 @@ export const toAssignedTaskResponseDto = (
   title: task.title,
   description: task.description,
   status: task.status,
+  priority: task.priority,
   dueDate: task.dueDate,
 
   project: {

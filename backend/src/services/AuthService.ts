@@ -72,6 +72,11 @@ export class AuthService {
     refreshToken
   );
 
+  const updatedUser = await this.userRepository.findById(user._id.toString());
+
+console.log("Generated:", refreshToken);
+console.log("Saved:", updatedUser?.refreshToken);
+
   return {
     accessToken,
     refreshToken,
@@ -99,6 +104,7 @@ export class AuthService {
     userId: string;
   };
 
+
 console.log("Decoded token:", decoded);
   const user = await this.userRepository.findById(
     decoded.userId
@@ -111,6 +117,10 @@ console.log("Decoded token:", decoded);
       "User not found"
     );
   }
+
+    console.log("Cookie token:", token);
+console.log("DB token:", user.refreshToken);
+console.log("Equal:", user.refreshToken === token);
 
   if (user.refreshToken !== token) {
     throw new ApiError(

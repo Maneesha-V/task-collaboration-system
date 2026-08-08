@@ -19,6 +19,7 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.accessToken = null;
+      state.authChecked = true;
       localStorage.removeItem("accessToken");
     },
   },
@@ -49,6 +50,7 @@ const authSlice = createSlice({
       })
       .addCase(refreshToken.pending, (state) => {
         state.loading = true;
+        state.authChecked = false;
       })
       .addCase(refreshToken.fulfilled, (state, action) => {
         console.log("resp-ref", action.payload);
@@ -56,12 +58,17 @@ const authSlice = createSlice({
         state.accessToken = action.payload.data.accessToken;
         state.user = action.payload.data.user;
         state.authChecked = true;
+        localStorage.setItem(
+          "accessToken",
+          action.payload.data.accessToken
+        );
       })
       .addCase(refreshToken.rejected, (state) => {
+        state.loading = false;
         state.authChecked = true;
         state.accessToken = null;
         state.user = null;
-        state.authChecked = false;
+        localStorage.removeItem("accessToken");
       });
   },
 });

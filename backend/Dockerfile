@@ -1,23 +1,27 @@
-# Use Node.js 20
-FROM node:20
+# ---------- Build Stage ----------
+FROM node:20-alpine AS builder
 
-# Create app directory
 WORKDIR /app
 
-# Copy package files
 COPY package*.json ./
 
-# Install dependencies
 RUN npm install
 
-# Copy project files
 COPY . .
 
-# Build TypeScript
 RUN npm run build
 
-# Expose backend port
+# ---------- Production Stage ----------
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install --omit=dev
+
+COPY --from=builder /app/dist ./dist
+
 EXPOSE 3000
 
-# Start application
-CMD ["npm", "start"]
+CMD ["node", "dist/server.js"]

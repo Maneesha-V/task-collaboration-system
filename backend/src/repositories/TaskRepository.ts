@@ -1,8 +1,15 @@
 import { injectable } from "inversify";
 import { ITaskRepository } from "../interfaces/ITaskRepository";
-import { AssignedTaskResponse, ITask, Task, TaskListResponse } from "../models/Task";
+import {
+  AssignedTaskResponse,
+  ITask,
+  Task,
+  TaskListResponse,
+} from "../models/Task";
 import mongoose from "mongoose";
 import { AuthUser, PaginatedQuery } from "../types/authTypes";
+import User from "../models/User";
+import { Project } from "../models/Project";
 
 @injectable()
 export class TaskRepository implements ITaskRepository {
@@ -22,16 +29,48 @@ export class TaskRepository implements ITaskRepository {
       project,
       sort,
     } = query;
+    console.log(search);
 
     const filter: Record<string, unknown> = {};
     if (id) {
       filter.createdBy = id;
     }
     if (search) {
-      filter.title = {
-        $regex: search,
-        $options: "i",
-      };
+      const users = await User.find({
+        name: {
+          $regex: search,
+          $options: "i",
+        },
+      }).select("_id");
+      const userIds = users.map((user) => user._id);
+      console.log(userIds);
+      const projects = await Project.find({
+        title: {
+          $regex: search,
+          $options: "i"
+        }
+      }).select("_id");
+      const projectIds = projects.map((project) => project._id);
+      console.log(projectIds);
+      
+      filter.$or = [
+        {
+          title: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+        {
+          assignedTo: {
+            $in: userIds,
+          },
+        },
+        {
+          project: {
+            $in: projectIds
+          }
+        }
+      ];
     }
     if (status) {
       filter.status = status;
