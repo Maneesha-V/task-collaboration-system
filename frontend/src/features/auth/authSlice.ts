@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { login, refreshToken } from "./authThunk";
+import { login, logout, refreshToken } from "./authThunk";
 import type { AuthState } from "./authTypes";
 
 const initialState: AuthState = {
@@ -15,14 +15,7 @@ const authSlice = createSlice({
 
   initialState,
 
-  reducers: {
-    logout: (state) => {
-      state.user = null;
-      state.accessToken = null;
-      state.authChecked = true;
-      localStorage.removeItem("accessToken");
-    },
-  },
+  reducers: {},
 
   extraReducers: (builder) => {
     builder
@@ -58,10 +51,7 @@ const authSlice = createSlice({
         state.accessToken = action.payload.data.accessToken;
         state.user = action.payload.data.user;
         state.authChecked = true;
-        localStorage.setItem(
-          "accessToken",
-          action.payload.data.accessToken
-        );
+        localStorage.setItem("accessToken", action.payload.data.accessToken);
       })
       .addCase(refreshToken.rejected, (state) => {
         state.loading = false;
@@ -69,10 +59,16 @@ const authSlice = createSlice({
         state.accessToken = null;
         state.user = null;
         localStorage.removeItem("accessToken");
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.user = null;
+        state.accessToken = null;
+        state.authChecked = true;
+
+        localStorage.removeItem("accessToken");
       });
   },
 });
 
-export const { logout } = authSlice.actions;
 
 export default authSlice.reducer;

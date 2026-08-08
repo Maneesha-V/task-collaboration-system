@@ -18,3 +18,8 @@ export const refreshTokenApi = async () => {
   const response = await api.post("/auth/refresh-token");
   return response.data;
 };
+
+export const logoutApi = async () => {
+  const response = await api.post("/auth/logout");
+  return response.data;
+};

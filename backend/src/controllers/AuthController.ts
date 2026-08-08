@@ -105,8 +105,11 @@ try{
  await this.authService.logout(token);
 
 
- res
- .clearCookie("refreshToken")
+res.clearCookie("refreshToken", {
+  httpOnly: true,
+  secure: false,
+  sameSite: "strict",
+})
  .status(200)
  .json({
    success:true,
